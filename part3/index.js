@@ -25,6 +25,8 @@ let notes = [
 const cors = require('cors');
 app.use(cors());
 
+app.use(express.static('build'));
+
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method);
   console.log('Path:  ', request.path);
