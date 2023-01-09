@@ -1,7 +1,11 @@
+require('dotenv').config(); //needed for env file
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
+//let password = '3nFmlSNQl6AsLKIC';
+const Note = require('./models/note');
 
-let notes = [
+/* let notes = [
   {
     id: 1,
     content: 'HTML is easy',
@@ -20,7 +24,7 @@ let notes = [
     date: '2022-05-30T19:20:14.298Z',
     important: true,
   },
-];
+]; */
 
 const cors = require('cors');
 app.use(cors());
@@ -65,7 +69,11 @@ app.post('/api/notes', (request, response) => {
   response.json(note);
 });
 
-app.get('/api/notes/', (request, response) => response.json(notes));
+app.get('/api/notes/', (request, response) => {
+  Note.find({}).then((notes) => {
+    response.json(notes);
+  });
+});
 
 app.get('/api/notes/:id', (request, response) => {
   let id = Number(request.params.id);
@@ -90,7 +98,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
