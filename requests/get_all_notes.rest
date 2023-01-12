@@ -1,4 +1,4 @@
-GET http://localhost:3001/api/notes
+GET http://localhost:3001/api/notes/5c41c90e84d891c15dfa3431
 
 ###
 POST http://localhost:3001/api/notes HTTP/1.1
@@ -6,10 +6,10 @@ Content-type: application/json
 
 {
     
-    "content": "Test#7",
+    "content": "MongoDb is cool",
     
     "important": true
   }
 
 ###
-DELETE http://localhost:3001/api/notes/4
+DELETE http://localhost:3001/api/notes/63bd7aafc82c6a76390d7fc0
