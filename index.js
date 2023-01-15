@@ -70,14 +70,10 @@ app.delete('/api/notes/:id', (request, response, next) => {
 
 app.put('/api/notes/:id', (request, response, next) => {
   const body = request.body;
-  /* console.log(body);
-  if (Array.isArray(body)) {
-    console.log('True');
-    Note.update(body) 
-  }*/
   const note = {
     content: body.content,
     important: body.important,
+    urgent: body.urgent,
   };
   //console.log(note);
   Note.findByIdAndUpdate(request.params.id, note, { new: true })

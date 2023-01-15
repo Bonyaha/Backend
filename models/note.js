@@ -15,7 +15,7 @@ const noteSchema = new mongoose.Schema({
   content: String,
   date: Date,
   important: Boolean,
-  noteId: Number,
+  urgent: Boolean,
 });
 
 noteSchema.set('toJSON', {
