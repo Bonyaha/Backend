@@ -75,7 +75,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     important: body.important,
     urgent: body.urgent,
   };
-  //console.log(note);
+  console.log(note);
   Note.findByIdAndUpdate(request.params.id, note, { new: true })
     .then((updatedNote) => {
       response.json(updatedNote);
