@@ -34,7 +34,7 @@ app.post('/api/notes', (request, response) => {
     content: body.content,
     important: body.important || false,
     date: new Date().toISOString(),
-    noteId: body.noteId,
+    urgent: body.urgent,
   });
 
   note.save().then((savedNote) => {
