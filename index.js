@@ -3,18 +3,17 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const Note = require('./models/note');
-const { request, response } = require('express');
 
-/* const requestLogger = (request, response, next) => {
+const requestLogger = (request, response, next) => {
   console.log('Method:', request.method);
   console.log('Path:  ', request.path);
   console.log('Body:  ', request.body);
   console.log('---');
   next();
-}; */
+};
 
 app.use(express.json());
-//app.use(requestLogger);
+app.use(requestLogger);
 app.use(cors());
 app.use(express.static('build'));
 
@@ -29,12 +28,12 @@ app.post('/api/notes', (request, response) => {
       error: 'content missing',
     });
   }
-  console.log(body);
+
   const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date().toISOString(),
-    urgent: body.urgent,
+    urgent: body.urgent || false,
   });
 
   note.save().then((savedNote) => {
@@ -75,7 +74,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     important: body.important,
     urgent: body.urgent,
   };
-  console.log(note);
+
   Note.findByIdAndUpdate(request.params.id, note, { new: true })
     .then((updatedNote) => {
       response.json(updatedNote);
