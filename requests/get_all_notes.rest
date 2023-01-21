@@ -6,7 +6,7 @@ Content-type: application/json
 
 {
     
-    "content": "MongoDb is cool",
+    "content": "Mong",
     
     "important": true
   }
