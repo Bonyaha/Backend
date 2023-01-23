@@ -33,7 +33,6 @@ app.post('/api/notes', (request, response, next) => {
     content: body.content,
     important: body.important || false,
     date: new Date().toISOString(),
-    urgent: body.urgent || false,
   });
 
   note
