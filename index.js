@@ -1,4 +1,6 @@
-require('dotenv').config(); //needed for env file
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config(); //needed for env file
+}
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -32,7 +34,7 @@ app.post('/api/notes', (request, response, next) => {
   const note = new Note({
     content: body.content,
     important: body.important || false,
-    date: new Date().toISOString(),
+    date: new Date(),
   });
 
   note
