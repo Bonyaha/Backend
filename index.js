@@ -1,9 +1,10 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config() //needed for env file
-}
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const express = require('express')
 const app = express()
 const cors = require('cors')
+require('dotenv').config()
+
 const Note = require('./models/note')
 
 const requestLogger = (request, response, next) => {
