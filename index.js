@@ -36,6 +36,7 @@ app.post('/api/notes', (request, response, next) => {
     content: body.content,
     important: body.important || false,
     date: new Date(),
+    checked: body.checked || false,
   })
 
   note
@@ -71,12 +72,18 @@ app.delete('/api/notes/:id', (request, response, next) => {
     })
     .catch((error) => next(error))
 })
+app.delete('/api/notes/', (request, response, next) => {
+  console.log('test')
+  Note.deleteMany({ checked: true }).then((result) => {
+    console.log(result)
+  })
+})
 
 app.put('/api/notes/:id', (request, response, next) => {
-  const { content, important } = request.body
+  const { content, important, checked } = request.body
   Note.findByIdAndUpdate(
     request.params.id,
-    { content, important },
+    { content, important, checked },
     { new: true, runValidators: true, context: 'query' }
   )
     .then((updatedNote) => {
