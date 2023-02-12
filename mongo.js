@@ -15,8 +15,10 @@ if (name === 'Roman') {
   console.log('Yes')
 }
 
-const url = `mongodb+srv://Bosher:${password}@cluster0.megdfbi.mongodb.net/noteApp?retryWrites=true&w=majority`
+/* const url = `mongodb+srv://Bosher:${password}@cluster0.megdfbi.mongodb.net/noteApp?retryWrites=true&w=majority` */
+const url = `mongodb+srv://Bosher:${password}@cluster0.megdfbi.mongodb.net/testNoteApp?retryWrites=true&w=majority`
 
+mongoose.set('strictQuery', false)
 const noteSchema = new mongoose.Schema({
   content: String,
   date: Date,
@@ -27,11 +29,11 @@ const Note = mongoose.model('Note', noteSchema)
 
 mongoose
   .connect(url)
-  .then((result) => {
+  .then(() => {
     console.log('connected')
 
     const note = new Note({
-      content: 'HTML is Easy',
+      content: 'HTML is easy',
       date: new Date(),
       important: true,
     })
