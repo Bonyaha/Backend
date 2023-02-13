@@ -6,12 +6,13 @@ Content-type: application/json
 
 {
     
-    "content": "Mong",
-    
-    "important": true
+    "content": "Hey there👋",
+    "important": true,
+    "userId":"63ea461a790e575df6f9f2a1"
   }
 
+
 ###
-DELETE http://localhost:3001/api/notes/63bd7aafc82c6a76390d7fc0
+DELETE http://localhost:3001/api/notes/63d932a4302f18cd1a055b5a
 
 
