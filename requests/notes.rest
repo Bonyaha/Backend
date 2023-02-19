@@ -3,12 +3,13 @@ GET http://localhost:3001/api/notes/5c41c90e84d891c15dfa3431
 ###
 POST http://localhost:3001/api/notes HTTP/1.1
 Content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpZCI6IjYzZWI5Nzc3Mjc2MzcwNzRkMjA5Y2UyMiIsImlhdCI6MTY3NjM5MzE0Mn0.kdFPOACKaP6uFuapJr9yhuEE_TOjAJq3IQCBDRTC86U
 
 {
     
     "content": "Hey there👋",
-    "important": true,
-    "userId":"63ea461a790e575df6f9f2a1"
+    "important": true
+    
   }
 
 
