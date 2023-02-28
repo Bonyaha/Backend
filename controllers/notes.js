@@ -3,16 +3,8 @@
 /* The router is in fact a middleware, that can be used for defining "related routes" in a single place, which is typically placed in its own module. */
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
+const { userExtractor } = require('../utils/middleware')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
@@ -28,13 +20,14 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
-notesRouter.post('/', async (request, response) => {
+notesRouter.post('/', userExtractor, async (request, response) => {
+  console.log('notesRouter')
   const body = request.body
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing or invalid' })
   }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   const note = new Note({
     content: body.content,
@@ -50,9 +43,24 @@ notesRouter.post('/', async (request, response) => {
   response.status(201).json(savedNote)
 })
 
-notesRouter.delete('/:id', async (request, response) => {
-  await Note.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+notesRouter.delete('/', userExtractor, async (request, response) => {
+  console.log('notesRouter.delete')
+  if (!request.token) {
+    console.log('Problem')
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  const user = request.user
+  const noteIds = request.body.ids
+  console.log(noteIds)
+  console.log(user)
+  const result = await Note.deleteMany({ _id: { $in: noteIds }, user: user.id })
+  if (result.deletedCount > 0) {
+    return response.status(204).end()
+  }
+  return response.status(401).json({
+    error: 'Unauthorized to access the notes',
+  })
 })
 
 notesRouter.put('/:id', async (request, response) => {
