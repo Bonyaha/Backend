@@ -1,6 +1,10 @@
 const Note = require('../models/note')
 const User = require('../models/user')
 
+const user = {
+  username: 'John',
+  password: 'Sherka',
+}
 const initialNotes = [
   {
     content: 'HTML is easy',
@@ -30,6 +34,7 @@ const usersInDb = async () => {
   return users.map((u) => u.toJSON())
 }
 module.exports = {
+  user,
   initialNotes,
   nonExistingId,
   notesInDb,

@@ -3,12 +3,57 @@ const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 
 const Note = require('../models/note')
+const User = require('../models/user')
+
+const loginWithTestUser = async () => {
+  const credentials = {
+    username: helper.user.username,
+    password: helper.user.password,
+  }
+  const response = await api
+    .post('/api/login')
+    .send(credentials)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return response.body.token
+}
+
+/* beforeAll(async () => {
+  await User.deleteMany({})
+  const user = {
+    username: helper.user.username,
+    name: 'test user',
+    password: helper.user.password,
+  }
+  await api
+    .post('/api/users')
+    .send(user)
+    .set('Accept', 'application/json')
+    .expect('Content-Type', /application\/json/)
+}) */
 
 beforeEach(async () => {
   await Note.deleteMany({})
-  await Note.insertMany(helper.initialNotes)
+  await User.deleteMany({})
+
+  const passwordHash = await bcrypt.hash(helper.user.password, 10)
+  let user = new User({
+    username: helper.user.username,
+    name: 'test user',
+    passwordHash: passwordHash,
+  })
+
+  for (let note of helper.initialNotes) {
+    let newNote = new Note(note)
+    newNote.user = user.toJSON().id.toString()
+    newNote = await newNote.save()
+    user.notes.concat(newNote.toJSON().id.toString())
+  }
+  user = await user.save()
 })
 
 describe('when there is initially some notes saved', () => {
@@ -45,6 +90,10 @@ describe('viewing a specific note', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
+    resultNote.body.user = mongoose.Types.ObjectId(resultNote.body.user)
+    console.log('expected:', noteToView)
+    console.log('received:', resultNote.body)
+
     expect(resultNote.body).toEqual(noteToView)
   })
 
@@ -63,6 +112,7 @@ describe('viewing a specific note', () => {
 
 describe('addition of a new note', () => {
   test('succeeds with valid data', async () => {
+    const token = await loginWithTestUser()
     const newNote = {
       content: 'async/await simplifies making async calls',
       important: true,
@@ -71,6 +121,7 @@ describe('addition of a new note', () => {
     await api
       .post('/api/notes')
       .send(newNote)
+      .set('Authorization', `bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -96,10 +147,15 @@ describe('addition of a new note', () => {
 
 describe('deletion of a note', () => {
   test('succeeds with status code 204 if id is valid', async () => {
+    const token = await loginWithTestUser()
     const notesAtStart = await helper.notesInDb()
     const noteToDelete = notesAtStart[0]
 
-    await api.delete(`/api/notes/${noteToDelete.id}`).expect(204)
+    await api
+      .delete('/api/notes/')
+      .set('Authorization', `bearer ${token}`)
+      .send({ ids: [noteToDelete.id] })
+      .expect(204)
 
     const notesAtEnd = await helper.notesInDb()
 

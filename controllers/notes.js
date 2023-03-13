@@ -21,7 +21,7 @@ notesRouter.get('/:id', async (request, response) => {
 })
 
 notesRouter.post('/', userExtractor, async (request, response) => {
-  console.log('notesRouter')
+  //console.log('notesRouter')
   const body = request.body
 
   if (!request.token) {
@@ -44,16 +44,16 @@ notesRouter.post('/', userExtractor, async (request, response) => {
 })
 
 notesRouter.delete('/', userExtractor, async (request, response) => {
-  console.log('notesRouter.delete')
+  //console.log('notesRouter.delete')
   if (!request.token) {
-    console.log('Problem')
+    //console.log('Problem')
     return response.status(401).json({ error: 'token missing or invalid' })
   }
 
   const user = request.user
   const noteIds = request.body.ids
-  console.log(noteIds)
-  console.log(user)
+  //console.log(noteIds)
+  //console.log(user)
   const result = await Note.deleteMany({ _id: { $in: noteIds }, user: user.id })
   if (result.deletedCount > 0) {
     return response.status(204).end()
